@@ -1,5 +1,6 @@
 package com.reviews.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,5 +25,6 @@ public class Comment {
     private String text;
 
     @ManyToOne
+    @JsonIgnore
     private Review review;
 }
