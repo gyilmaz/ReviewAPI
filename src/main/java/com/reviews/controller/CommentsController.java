@@ -4,10 +4,12 @@ import com.reviews.model.Comment;
 import com.reviews.model.Review;
 import com.reviews.repository.jpa.CommentRepository;
 import com.reviews.repository.jpa.ReviewRepository;
+import com.reviews.repository.mongo.ReviewMongoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +22,13 @@ public class CommentsController {
 
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
+    private final ReviewMongoRepository reviewMongoRepository;
 
-    public CommentsController(ReviewRepository reviewRepository, CommentRepository commentRepository) {
+
+    public CommentsController(ReviewRepository reviewRepository, CommentRepository commentRepository, ReviewMongoRepository reviewMongoRepository) {
         this.reviewRepository = reviewRepository;
         this.commentRepository = commentRepository;
+        this.reviewMongoRepository = reviewMongoRepository;
     }
 
     /**
@@ -53,6 +58,9 @@ public class CommentsController {
         Optional<Review> optional = reviewRepository.findById(reviewId);
         if (optional.isPresent()) {
             comment.setReview(optional.get());
+            Review review=reviewMongoRepository.findById(reviewId).get();
+            review=review.addComment(comment);
+            reviewMongoRepository.save(review);
             return ResponseEntity.ok(commentRepository.save(comment));
         } else {
             return ResponseEntity.notFound().build();

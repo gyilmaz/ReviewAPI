@@ -103,6 +103,8 @@ public class ReviewsApplicationTests {
 				comment.setTitle("comment tiemte" + l);
 				comment.setReview(reviewRepository.findById(l).get());
 				commentRepository.save(comment);
+				review.addComment(comment);
+				reviewMongoRepository.save(review);
 
 		}catch(NoSuchElementException e){
 		e.printStackTrace();
@@ -120,32 +122,32 @@ public class ReviewsApplicationTests {
 	@Test
 	public void test02ReviewRepoSize() throws Exception {
 		List<Review> reviews= reviewRepository.findAll();
-		Assertions.assertEquals(13, reviews.size());
+		Assertions.assertEquals(5, reviews.size());
 	}
 
 	@Test
 	public void test03ProductRepoSize() throws Exception {
 		List<Product> products= productRepository.findAll();
-		Assertions.assertEquals(22, products.size());
+		Assertions.assertEquals(3, products.size());
 	}
 
 	@Test
 	public void test04ReviewFindById(){
-		Review review= reviewRepository.findById(2l).get();
-		Assertions.assertEquals("reviewtext"+2l,review.getText());
+		Review review= reviewRepository.findById(1l).get();
+		Assertions.assertEquals("reviewtext"+1l,review.getText());
 	}
 
 	@Test
 	public void test05FindAllReviewByProduct(){
-		List<Review> reviews= reviewRepository.findAllByProduct(productRepository.findById(3l).get());
-		Assertions.assertEquals(2, reviews.size());
+		List<Review> reviews= reviewRepository.findAllByProduct(productRepository.findById(1l).get());
+		Assertions.assertEquals(3, reviews.size());
 	}
 
 	@Test
 	public void test06FindAllCommentByReview(){
-		List<Comment> comments= commentRepository.findAllByReview(reviewRepository.findById(3l).get());
-		Assertions.assertEquals("comments" + 3l, comments.get(0).getText());
-		Assertions.assertEquals("comment tiemte" + 3l, comments.get(0).getTitle());
+		List<Comment> comments= commentRepository.findAllByReview(reviewRepository.findById(1l).get());
+		Assertions.assertEquals("comments" + 1l, comments.get(0).getText());
+		Assertions.assertEquals("comment tiemte" + 1l, comments.get(0).getTitle());
 	}
 
 
@@ -153,6 +155,13 @@ public class ReviewsApplicationTests {
 	public void test07ReviewByMongoId(){
 		Review review= reviewMongoRepository.findById(1l).get();
 		Assertions.assertEquals("reviewtext"+1l,review.getText());
+	}
+
+
+	@Test
+	public void test08GetCommentsFromMongo(){
+		Review review= reviewMongoRepository.findById(1l).get();
+		System.out.println(review.getCommentList().size());
 	}
 
 
